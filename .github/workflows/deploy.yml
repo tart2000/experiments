@@ -26,7 +26,7 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          BASE: /${{ github.event.repository.name }}/
+          BASE: /
       # GitHub Pages n'a pas de fallback SPA : 404.html = index.html pour que /ransom fonctionne en accès direct
       - run: cp dist/index.html dist/404.html
       - uses: actions/configure-pages@v5
