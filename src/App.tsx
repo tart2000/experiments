@@ -22,7 +22,13 @@ export default function App() {
   if (!exp) return <Home />
 
   const download = async () => {
-    const res = await exportRef.current?.()
+    let res
+    try {
+      res = await exportRef.current?.()
+    } catch (e) {
+      alert(e instanceof Error ? e.message : String(e))
+      return
+    }
     if (!res) return
     const url = URL.createObjectURL(res.blob)
     const a = document.createElement('a')
