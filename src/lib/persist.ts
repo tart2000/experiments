@@ -1,5 +1,6 @@
-// Persistance JSON via le middleware Vite (data/<id>.json).
+// Persistance JSON via le middleware Vite (data/<id>.json) : n'existe qu'en dev.
 export async function loadState<T>(id: string): Promise<Partial<T>> {
+  if (!import.meta.env.DEV) return {}
   try {
     const res = await fetch(`/api/state/${id}`)
     return res.ok ? await res.json() : {}
@@ -10,6 +11,7 @@ export async function loadState<T>(id: string): Promise<Partial<T>> {
 
 const timers = new Map<string, number>()
 export function saveState(id: string, value: unknown, delay = 300) {
+  if (!import.meta.env.DEV) return
   window.clearTimeout(timers.get(id))
   timers.set(
     id,
