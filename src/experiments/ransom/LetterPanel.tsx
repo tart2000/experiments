@@ -113,7 +113,18 @@ export function LetterPanel(props: {
             <SelectTrigger>{fontById(spec.fontId).label}</SelectTrigger>
             <SelectContent>
               {FONTS.map((f) => (
-                <SelectItem key={f.id} value={f.id}>
+                <SelectItem
+                  key={f.id}
+                  value={f.id}
+                  adornment={
+                    <span
+                      className="mr-2 flex size-8 shrink-0 items-center justify-center overflow-hidden rounded bg-white text-xl leading-none text-black"
+                      style={{ fontFamily: `"${f.family}"`, fontWeight: f.weight }}
+                    >
+                      {spec.char}
+                    </span>
+                  }
+                >
                   {f.label}
                 </SelectItem>
               ))}

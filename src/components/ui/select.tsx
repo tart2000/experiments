@@ -36,7 +36,7 @@ export function SelectContent({ children, ...props }: React.ComponentProps<typeo
   )
 }
 
-export function SelectItem({ children, className, ...props }: React.ComponentProps<typeof SelectPrimitive.Item>) {
+export function SelectItem({ children, className, adornment, ...props }: React.ComponentProps<typeof SelectPrimitive.Item> & { adornment?: React.ReactNode }) {
   return (
     <SelectPrimitive.Item
       className={cn(
@@ -45,6 +45,7 @@ export function SelectItem({ children, className, ...props }: React.ComponentPro
       )}
       {...props}
     >
+      {adornment}
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator className="absolute right-2">
         <Check className="size-4" />
