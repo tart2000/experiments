@@ -40,6 +40,7 @@ function jsonState(): Plugin {
 }
 
 export default defineConfig({
+  base: process.env.BASE ?? '/',
   plugins: [react(), tailwindcss(), jsonState()],
   resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
 })

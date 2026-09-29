@@ -1,5 +1,5 @@
 import { experiments } from '@/experiments/registry'
-import { navigate } from '@/lib/router'
+import { href, navigate } from '@/lib/router'
 
 export default function Home() {
   return (
@@ -12,7 +12,7 @@ export default function Home() {
           {experiments.map((e) => (
             <a
               key={e.id}
-              href={`/${e.id}`}
+              href={href(`/${e.id}`)}
               onClick={(ev) => {
                 ev.preventDefault()
                 navigate(`/${e.id}`)
