@@ -7,11 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/u
 import { Field, Section, SliderField } from '@/components/controls'
 import { cn } from '@/lib/utils'
 import type { Experiment, ExportFn } from '../types'
-import { defaultParams, WIDTH, type BrowserParams } from './params'
+import { defaultParams, WIDTH, type BrowserParams, type Ratio } from './params'
 import { renderMock } from './render'
 
 const BROWSERS = { safari: 'Safari', chrome: 'Chrome', arc: 'Arc (minimal)' } as const
 const THEMES = { light: 'Clair', dark: 'Sombre' } as const
+const RATIOS: Record<Ratio, string> = { auto: 'Auto (selon l\'image)', '1:1': '1:1', '2:3': '2:3', '3:4': '3:4', '3:2': '3:2', '4:3': '4:3' }
 const BACKGROUNDS = { transparent: 'Transparent', white: 'Blanc', black: 'Noir', gradient: 'Dégradé' } as const
 
 function Options<T extends string>({ label, value, options, onChange }: { label: string; value: T; options: Record<T, string>; onChange: (v: T) => void }) {
@@ -51,6 +52,7 @@ function Controls({ params: p, set }: { params: BrowserParams; set: (patch: Part
       </Section>
 
       <Section title="Apparence">
+        <Options label="Ratio de l'image finale" value={p.ratio} options={RATIOS} onChange={(ratio) => set({ ratio })} />
         <SliderField label="Arrondi" value={p.radius} min={0} max={32} onChange={(radius) => set({ radius })} />
         <SliderField label="Ombre" value={p.shadow} min={0} max={100} format={(v) => `${v}%`} onChange={(shadow) => set({ shadow })} />
         <SliderField label="Marge" value={p.padding} min={0} max={200} onChange={(padding) => set({ padding })} />
@@ -136,10 +138,11 @@ function Preview({ params: p, exportRef }: { params: BrowserParams; set: (patch:
         <span className="text-xs text-muted-foreground">ou glisse-dépose / colle (⌘V). Rien n'est envoyé : tout reste dans ton navigateur.</span>
       </div>
       <div className={cn('flex min-h-0 flex-1 overflow-y-auto rounded-lg border border-dashed border-transparent', over && 'border-primary bg-muted/40')}>
+        {/* ratio fixe : la note entière tient dans la zone ; auto : pleine largeur, on scrolle si l'image est haute */}
         <canvas
           ref={canvasRef}
-          className={cn('m-auto h-auto w-full rounded-md', p.background === 'transparent' && 'checker')}
-          style={{ maxWidth: WIDTH + p.padding * 2 }}
+          className={cn('m-auto rounded-md', p.ratio === 'auto' ? 'h-auto w-full' : 'max-h-full max-w-full', p.background === 'transparent' && 'checker')}
+          style={p.ratio === 'auto' ? { maxWidth: WIDTH + p.padding * 2 } : { width: 'auto', height: 'auto' }}
         />
       </div>
     </div>

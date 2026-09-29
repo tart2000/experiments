@@ -1,12 +1,15 @@
 import { CHROME_HEIGHT, drawChrome } from './chrome'
-import { WIDTH, type BrowserParams } from './params'
+import { RATIO_HW, WIDTH, type BrowserParams } from './params'
 
 const MAX_PX = 16000 // limite de sécurité d'un canvas
 
 export function mockSize(img: HTMLImageElement | null, p: BrowserParams) {
   const barH = CHROME_HEIGHT[p.browser]
   const imgH = Math.round(img ? (WIDTH * img.naturalHeight) / img.naturalWidth : WIDTH * 0.6)
-  return { w: WIDTH + p.padding * 2, h: barH + imgH + p.padding * 2, barH, imgH }
+  const w = WIDTH + p.padding * 2
+  // ratio fixe : la fenêtre garde sa largeur et reste ancrée en haut (vide en dessous si l'image est courte)
+  const h = p.ratio === 'auto' ? barH + imgH + p.padding * 2 : Math.round(w * RATIO_HW[p.ratio])
+  return { w, h, barH, imgH }
 }
 
 /** Réduit l'échelle demandée si le canvas dépasserait la limite. */
@@ -33,7 +36,8 @@ export function renderMock(canvas: HTMLCanvasElement, img: HTMLImageElement | nu
   }
 
   const dark = p.theme === 'dark'
-  const winH = barH + imgH
+  // ratio fixe : la marge du bas est respectée, donc la hauteur de la fenêtre est plafonnée (l'image est coupée en bas)
+  const winH = p.ratio === 'auto' ? barH + imgH : Math.max(barH, Math.min(barH + imgH, h - p.padding * 2))
   const path = () => {
     ctx.beginPath()
     ctx.roundRect(p.padding, p.padding, WIDTH, winH, p.radius)
