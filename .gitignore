@@ -1,0 +1,7 @@
+node_modules
+dist
+data/*.json
+.DS_Store
+.DS_Store
+*.tsbuildinfo
+ransom/textures/color/ransom-*
