@@ -39,3 +39,12 @@ export function loadTextures(): Promise<Textures> {
   })()
   return cache
 }
+
+// Texture papier appliquée par-dessus toute la note (option). Chargée seulement si activée.
+import overlayUrl from '/ransom/textures/paper_LG.jpg'
+
+let overlayCache: Promise<HTMLImageElement> | null = null
+export function loadOverlay(): Promise<HTMLImageElement> {
+  overlayCache ??= load(overlayUrl)
+  return overlayCache
+}

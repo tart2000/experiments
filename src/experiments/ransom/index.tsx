@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Shuffle } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
 import { Field, Section, SliderField } from '@/components/controls'
@@ -14,7 +15,7 @@ import { layout, type LetterOverride, type LetterSpec } from './layout'
 import { PALETTES, paletteById, type PaletteSet } from './palettes'
 import { defaultParams, type RansomParams } from './params'
 import { measure, renderNote } from './render'
-import { loadTextures } from './textures'
+import { loadOverlay, loadTextures } from './textures'
 
 const pct = (v: number) => `${v}%`
 
@@ -68,6 +69,10 @@ function Controls({ params: p, set }: { params: RansomParams; set: (patch: Parti
             ))}
           </SelectContent>
         </Select>
+        <label className="flex cursor-pointer items-center justify-between text-xs">
+          Texture papier par-dessus
+          <Switch checked={p.paperOverlay} onCheckedChange={(paperOverlay) => set({ paperOverlay })} />
+        </label>
       </Section>
 
       <Section title="Arrière-plan">
@@ -118,12 +123,12 @@ function Controls({ params: p, set }: { params: RansomParams; set: (patch: Parti
 }
 
 async function build(p: RansomParams, scale: number, canvas: HTMLCanvasElement, selected?: LetterSpec['index'] | null) {
-  const [tex] = await Promise.all([loadTextures(), ensureFonts(p.fonts)])
+  const [tex, , overlay] = await Promise.all([loadTextures(), ensureFonts(p.fonts), p.paperOverlay ? loadOverlay() : null])
   const { letters, height } = layout(p, measure)
   canvas.width = Math.round(p.width * scale)
   canvas.height = Math.round(height * scale)
   const ctx = canvas.getContext('2d')!
-  renderNote(ctx, letters, p.width, height, scale, p.background, tex, paletteById(p.palette).filter)
+  renderNote(ctx, letters, p.width, height, scale, p.background, tex, paletteById(p.palette).filter, overlay)
   const sel = letters.find((l) => l.index === selected)
   if (sel) {
     // repère de sélection (aperçu seulement, jamais dans l'export)

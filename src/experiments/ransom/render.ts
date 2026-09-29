@@ -171,6 +171,7 @@ export function renderNote(
   background: RansomParams['background'],
   tex: Textures,
   filter = 'none',
+  overlay: HTMLImageElement | null = null,
 ) {
   ctx.setTransform(1, 0, 0, 1, 0, 0)
   ctx.clearRect(0, 0, width * scale, height * scale)
@@ -184,13 +185,25 @@ export function renderNote(
     ctx.translate(s.cx * scale, s.cy * scale)
     ctx.rotate(s.angle)
     ctx.filter = filter
-    if (s.shadow) {
-      ctx.shadowColor = `rgba(0,0,0,${s.shadow.alpha})`
-      ctx.shadowBlur = s.shadow.blur * scale
-      ctx.shadowOffsetX = s.shadow.dx * scale
-      ctx.shadowOffsetY = s.shadow.dy * scale
-    }
     ctx.drawImage(piece, -(s.w / 2 + M) * scale, -(s.h / 2 + M) * scale)
     ctx.restore()
+  }
+  if (overlay) {
+    // multiply de la texture sur le contenu seulement (l'alpha d'origine est conservé)
+    const W = width * scale
+    const H = height * scale
+    const t = mk(W, H)
+    const tc = t.getContext('2d')!
+    tc.drawImage(ctx.canvas, 0, 0)
+    tc.globalCompositeOperation = 'multiply'
+    tc.globalAlpha = 0.5
+    const k = Math.max(W / overlay.naturalWidth, H / overlay.naturalHeight)
+    tc.drawImage(overlay, 0, 0, overlay.naturalWidth * k, overlay.naturalHeight * k)
+    tc.globalAlpha = 1
+    tc.globalCompositeOperation = 'destination-in'
+    tc.drawImage(ctx.canvas, 0, 0)
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+    ctx.clearRect(0, 0, W, H)
+    ctx.drawImage(t, 0, 0)
   }
 }

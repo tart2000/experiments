@@ -19,9 +19,8 @@ export interface RansomParams {
   caseMode: CaseMode
   paperPct: number // % lettres sur papier déchiré
   texturePct: number // % lettres sur texture couleur (le reste = uni)
-  shadowPct: number
-  shadowStrength: number
   palette: PaletteId
+  paperOverlay: boolean // texture papier par-dessus toute la note
   fonts: string[]
   overrides: Record<number, LetterOverride>
   background: Background
@@ -43,9 +42,8 @@ export const defaultParams: RansomParams = {
   caseMode: 'mixed',
   paperPct: 25,
   texturePct: 25,
-  shadowPct: 60,
-  shadowStrength: 50,
   palette: 'standard',
+  paperOverlay: false,
   fonts: [
     'alfa-slab-one',
     'anton',

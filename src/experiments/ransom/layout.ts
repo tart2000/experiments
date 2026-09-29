@@ -27,7 +27,6 @@ export interface LetterSpec {
   textFill: TextFill
   bg: Bg
   poly: Pt[] // forme (vide pour paper : la forme est celle de la texture)
-  shadow: { dx: number; dy: number; blur: number; alpha: number } | null
   decoration: Decoration
 }
 
@@ -86,7 +85,6 @@ export interface LetterOverride {
   frame?: boolean
   outline?: boolean
   textShadow?: boolean
-  shadow?: boolean
 }
 
 export function layout(p: RansomParams, measure: Measure): { letters: LetterSpec[]; height: number } {
@@ -212,17 +210,13 @@ export function layout(p: RansomParams, measure: Measure): { letters: LetterSpec
       }
     }
 
-    // --- flux décoration / ombre
-    const shadowRoll = rd() * 100
+    // --- flux décoration
+    rd() // réservé (ancienne ombre portée) : garde les tirages suivants stables
     const frameR = rd()
     const outlineR = rd()
     const tsR = rd()
     const outlineColorIdx = rd()
     const tsColorIdx = rd()
-    const k = p.shadowStrength / 100
-    const shadow = (ov.shadow ?? shadowRoll < p.shadowPct)
-      ? { dx: size * 0.03 * (0.5 + k), dy: size * 0.05 * (0.5 + k), blur: size * 0.06 * (0.3 + k * 1.4), alpha: 0.25 + 0.5 * k }
-      : null
     const decoration: Decoration = {}
     if (ov.frame ?? frameR < 0.03) decoration.frame = { color: textColor, width: Math.max(2, size * 0.035), inset: Math.min(padX, padY) * 0.45 }
     if (ov.outline ?? outlineR < 0.1) decoration.outline = { color: pickI([pal.inks[0], pal.light[0]], outlineColorIdx), width: size * 0.05 }
@@ -232,7 +226,7 @@ export function layout(p: RansomParams, measure: Measure): { letters: LetterSpec
       char, index, cx: 0, cy: 0, w, h, padX: padX / size, padY: padY / size,
       angle: ov.angle !== undefined ? (ov.angle * Math.PI) / 180 : (angleR * p.angleVar * Math.PI) / 180,
       fontId, size, textColor, textFill, bg, poly,
-      shadow, decoration,
+      decoration,
     }
     // décalage vertical pré-tiré (stocké dans cy, ajouté au placement)
     spec.cy = jitterR * (p.jitterY / 100) * p.fontSize * 0.5
