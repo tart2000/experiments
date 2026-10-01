@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
-import { DownloadSimple, SquaresFour } from '@phosphor-icons/react'
+import { useEffect, useRef, useState } from 'react'
+import { CircleNotch, DownloadSimple, SquaresFour } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
 import { experiments } from '@/experiments/registry'
@@ -12,6 +12,7 @@ export default function App() {
   const { hydrated, hydrate, params, setParams } = useApp()
   const path = usePath()
   const exportRef = useRef<ExportFn | null>(null)
+  const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     hydrate()
@@ -23,11 +24,14 @@ export default function App() {
 
   const download = async () => {
     let res
+    setBusy(true)
     try {
       res = await exportRef.current?.()
     } catch (e) {
       alert(e instanceof Error ? e.message : String(e))
       return
+    } finally {
+      setBusy(false)
     }
     if (!res) return
     const url = URL.createObjectURL(res.blob)
@@ -60,8 +64,9 @@ export default function App() {
           <exp.Controls key={exp.id} params={params[exp.id]} set={(patch) => setParams(exp.id, patch)} />
         </div>
         <div className="border-t border-border p-4">
-          <Button className="w-full" onClick={download}>
-            <DownloadSimple className="size-4" /> Télécharger PNG
+          <Button className="w-full" onClick={download} disabled={busy}>
+            {busy ? <CircleNotch className="size-4 animate-spin" /> : <DownloadSimple className="size-4" />}
+            {busy ? 'Génération…' : 'Télécharger'}
           </Button>
         </div>
       </aside>

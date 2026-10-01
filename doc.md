@@ -4,7 +4,7 @@ Petit labo de micro-expériences visuelles, dans une interface sobre façon Verc
 
 - Site : https://xp.arthurschmitt.com (GitHub Pages, déployé à chaque push sur `main`)
 - Dépôt : https://github.com/tart2000/experiments (public)
-- Expériences : **Ransom note generator** (`/ransom`), **Browser mockup** (`/browser`)
+- Expériences : **Ransom note generator** (`/ransom`), **Browser mockup** (`/browser`), **Carousel texte** (`/carousel`)
 
 ## Lancer le projet
 
@@ -79,6 +79,14 @@ ransom/textures/     textures lues directement par l'app (paper/, color/, paper_
 - Options : URL, titre d'onglet, arrondi, ombre, marge, fond, résolution d'export.
 - **Ratio de l'image finale** : Auto, 1:1, 2:3, 3:4, 3:2, 4:3. En ratio fixe, la fenêtre reste ancrée en haut, sa hauteur est plafonnée par la marge du bas (l'image est coupée), et l'aperçu tient entièrement dans la zone.
 - Plafond de sécurité : un canvas ne dépasse pas 16 000 px, l'échelle d'export baisse toute seule au besoin.
+
+## Carousel texte
+
+- Un grand texte, chaque `---` démarre une nouvelle slide (nombre de slides = séparateurs + 1) ; les retours à la ligne sont conservés.
+- Réglages : format (1:1, 4:5, 3:4, 9:16, 1,91:1, 16:9, 2:3), couleur de fond et de texte (20 pastilles + couleur libre), 10 polices, déco du bas (rien, flèche, points).
+- **Aperçu en HTML/CSS** (`SlidePreview.tsx`) : la slide est mise en page à la taille réelle du format puis réduite par `transform`. L'auto-fit du texte mesure le DOM (`largestFitting`, recherche dichotomique sur des entiers : une version à bornes décimales bouclait à l'infini et figeait le navigateur).
+- **Logo** (optionnel) : choisi depuis l'ordinateur, gardé en mémoire (jamais envoyé ni sauvegardé), calé en haut à gauche de chaque slide, 100 px de haut au plus (jamais agrandi) ; le texte démarre sous lui. Géométrie dans `fit.ts`, store dans `logo.ts`.
+- **Export en canvas** (`render.ts`) : même géométrie (`fit.ts`) et même algorithme d'ajustement ; 1 slide → PNG, plusieurs → `carousel.zip` (fflate). Le bouton du shell affiche un loader pendant la génération.
 
 ## Points d'attention connus
 

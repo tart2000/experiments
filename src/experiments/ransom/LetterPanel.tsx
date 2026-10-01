@@ -1,67 +1,12 @@
-import { ArrowCounterClockwise, Plus, X } from '@phosphor-icons/react'
+import { ArrowCounterClockwise, X } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
-import { Field, SliderField } from '@/components/controls'
+import { Chips, ColorPicker, Field, SliderField } from '@/components/controls'
 import { cn } from '@/lib/utils'
 import { FONTS, fontById } from './fonts'
 import type { LetterOverride, LetterSpec } from './layout'
 import type { PaletteSet } from './palettes'
 import { COLOR_URLS, PAPER_URLS } from './textures'
-
-function Chips<T extends string>({ options, value, onChange }: { options: [T, string][]; value: T | undefined; onChange: (v: T) => void }) {
-  return (
-    <div className="flex gap-1">
-      {options.map(([v, label]) => (
-        <button
-          key={v}
-          onClick={() => onChange(v)}
-          className={cn(
-            'flex-1 cursor-pointer rounded-md border px-2 py-1 text-xs transition-colors',
-            value === v ? 'border-primary bg-primary text-primary-foreground' : 'border-input text-muted-foreground hover:bg-muted',
-          )}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  )
-}
-
-function ColorPicker({ value, onChange, allowNone, swatches }: { value: string | null; onChange: (v: string | null) => void; allowNone?: boolean; swatches: string[] }) {
-  return (
-    <div className="flex flex-wrap items-center gap-1.5">
-      {allowNone && (
-        <button
-          onClick={() => onChange(null)}
-          title="Sans teinte"
-          className={cn('size-5 cursor-pointer rounded-full border text-[10px] leading-none text-muted-foreground', value === null ? 'ring-2 ring-primary' : 'border-input')}
-        >
-          ∅
-        </button>
-      )}
-      {swatches.map((c) => (
-        <button
-          key={c}
-          onClick={() => onChange(c)}
-          style={{ background: c }}
-          className={cn('size-5 cursor-pointer rounded-full border border-input', value?.toLowerCase() === c && 'ring-2 ring-primary ring-offset-1 ring-offset-card')}
-        />
-      ))}
-      <label
-        title="Couleur libre"
-        className="relative flex size-5 cursor-pointer items-center justify-center rounded-full border border-dashed border-muted-foreground text-muted-foreground hover:text-foreground"
-      >
-        <Plus className="size-3" weight="bold" />
-        <input
-          type="color"
-          value={value ?? '#ffffff'}
-          onChange={(e) => onChange(e.target.value)}
-          className="absolute inset-0 size-full cursor-pointer opacity-0"
-        />
-      </label>
-    </div>
-  )
-}
 
 function Toggle({ label, on, onChange }: { label: string; on: boolean; onChange: (v: boolean) => void }) {
   return (
